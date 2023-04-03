@@ -1,0 +1,292 @@
+var a = 2;
+
+console.log( a );
+
+a = 2;
+
+
+function foo(a) {
+    var b = a;
+    return a + b;
+   }
+   var c = foo( 2 );
+
+
+   function foo(a) {
+    console.log( a + b );
+    b = a;
+   }
+   foo( 2 );
+
+//lexical scope
+function foo(a) {
+ var b = a * 2;
+   function bar(c) {
+      console.log( a, b, c );
+    }
+ bar( b * 3 );
+}
+
+foo( 2 ); // 2, 4, 12
+
+
+ function foo(str, a) {
+    eval( str ); // cheating!
+    console.log( a, b );
+   }
+   var b = 2;
+   foo( "var b = 3;", 1 ); // 1, 3
+
+
+   function foo(a) {
+    var b = 2;
+    // some code
+    function bar() {
+    // ...
+    }
+    // more code
+    var c = 3;
+   }
+
+   bar(); // fails
+console.log( a, b, c ); // all 3 fail
+
+function doSomething(a) {
+    b = a + doSomethingElse( a * 2 );
+    console.log( b * 3 );
+   }
+   function doSomethingElse(a) {
+    return a - 1;
+   }
+   var b;
+   doSomething( 2 ); // 15
+
+
+   function doSomething(a) {
+    function doSomethingElse(a) {
+    return a - 1;
+    }
+    var b;
+    b = a + doSomethingElse( a * 2 );
+    console.log( b * 3 );
+   }
+   doSomething( 2 ); // 15
+
+
+
+   function foo() {
+    function bar(a) {
+    i = 3; // changing the `i` in the enclosing scope's
+    // for-loop
+    console.log( a + i );
+    }
+
+    for (var i=0; i<10; i++) {
+    bar( i * 2 ); // oops, inifinite loop ahead!
+    }
+   }
+   foo();
+
+
+var a = 2;
+
+function foo() { // <-- insert this
+ var a = 3;
+ console.log( a ); // 3
+} // <-- and this
+foo(); // <-- and this
+console.log( a ); // 2
+
+
+
+var a = 2;
+(function foo(){ // <-- insert this
+ var a = 3;
+ console.log( a ); // 3
+})(); // <-- and this
+console.log( a ); // 
+
+
+var foo = true;
+if (foo) {
+ var bar = foo * 2;
+ bar = something( bar );
+ console.log( bar );
+}
+
+try {
+   undefined(); // illegal operation to force an exception!
+  }
+  catch (err) {
+   console.log( err ); // works!
+  }
+  console.log( err ); // ReferenceError: `err` not found
+
+  var foo = true;
+if (foo) {
+ let bar = foo * 2;
+ bar = something( bar );
+ console.log( bar );
+}
+console.log( bar ); // ReferenceError
+
+console.log( a );
+var a = 2;
+
+
+
+var a;
+console.log( a );
+a = 2;
+
+
+foo();
+function foo() {
+   var a;
+ console.log( a ); // undefined
+  a = 2;
+}
+
+
+foo();
+function foo() {
+ console.log( a ); // undefined
+ var a = 2;
+}
+
+var foo;
+foo();//TypeError: foo is not a function
+ foo = function bar() {
+ console.log( a ); // undefined
+ var a = 2;
+}
+
+foo(); // "b"
+var a = true;
+if (a) {
+ function foo() { console.log("a"); }
+}
+else {
+ function foo() { console.log("b"); }
+}
+
+function foo() {
+   var a = 2;
+   function bar() {
+   console.log( a );
+   }
+   return bar;
+  }
+
+  var baz = foo();
+  baz(); // 2 -- Whoa, closure was just observed, man.
+
+function foo() {
+   var a = 2;
+   function baz() {
+   console.log( a ); // 2
+   }
+   bar( baz );
+  }
+  
+  function bar(fn) {
+   fn(); // look ma, I saw closure!
+  }
+  foo();
+  
+
+  var a = 2;
+(function IIFE(){
+ console.log( a );//2
+})()
+
+for (var i=1; i<=5; i++) {
+   setTimeout( function timer(){
+   console.log( i );
+   }, i*1000 );
+  }
+
+
+  for (var i=1; i<=5; i++) {
+   (function(){
+   setTimeout( function timer(){
+   console.log( i );
+   }, i*1000 );
+   })();
+  }
+  
+
+  for (var i=1; i<=5; i++) {
+   (function(){
+   var j = i;
+   setTimeout( function timer(){
+   console.log( j );
+   }, j*1000 );
+   })();
+  }
+
+
+  function wait(message) {
+   setTimeout( function timer(){
+   console.log( message );
+   }, 1000 );
+  }
+  wait( "Hello, closure!" );
+
+
+  //modules
+  function CoolModule() {
+   var something = "cool";
+   var another = [1, 2, 3];
+   
+   function doSomething() {
+      console.log( something );
+   }
+
+   function doAnother() {
+      console.log( another.join( " ! " ) );
+   }
+
+   return {
+   doSomething: doSomething,
+   doAnother: doAnother
+   };
+  }
+  var foo = CoolModule();
+  foo.doSomething(); // cool
+  foo.doAnother(); // 1 ! 2 ! 3
+
+  var foo = (function CoolModule(id) {
+   function change() {
+   // modifying the public API
+   publicAPI.identify = identify2;
+   }
+
+   function identify1() {
+   console.log( id );
+   }
+
+   function identify2() {
+   console.log( id.toUpperCase() );
+   }
+
+   var publicAPI = {
+      change: change,
+      identify: identify1
+      };
+
+      return publicAPI;
+   })( "foo module" );
+     foo.identify(); // foo module
+     foo.change();
+     foo.identify(); // FOO MODULE
+  
+     function foo() {
+      console.log( a ); // 2
+     }
+     function bar() {
+      var a = 3;
+      foo();
+     }
+     var a = 2;
+     bar();
